@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="static/CSS/product.css">
+<h4 align="center">Товары по заданным категориям</h4>
+{% for prd in prds %}
+    <div class="product-item">
+      <div class="product-img">
+        <a href="">
+          <img src = "{{ prd.img }}" alt=":(">
+        </a>
+      </div>
+      <div class="product-list">
+        <h3>{{ prd.desc }}</h3>
+<!--        <div class="stars"></div>-->
+        <span class="price">₽ {{ prd.price }}</span>
+        <div class="actions">
+          <div class="add-to-cart">
+            <a href="" class="cart-button">В корзину</a>
+          </div>
+<!--          <div class="add-to-links">-->
+<!--            <a href="" class="wishlist"></a>-->
+<!--            <a href="" class="compare"></a>-->
+<!--          </div>-->
+          </div>
+        </div>
+        {% if current_user.is_authenticated and prd.user_id == current_user.id%}
+    <div>
+        <a href="/edit_product/{{prd.id}}" class="btn btn-warning">
+            Изменить товар
+        </a>
+        <a href="/product_delete/{{prd.id}}" class="btn btn-danger">
+            Удалить товар
+        </a>
+    </div>
+{% endif %}
+    </div>
+
+{% endfor %}
+{% endblock %}

@@ -116,7 +116,6 @@ def default():
     req = ''
     if request.method == 'POST':
         req = request.form['req'].lower()
-    print(req)
     products = []
     str_indexes = []
     db_session.global_init("db/Shop.db")
@@ -227,4 +226,4 @@ def login():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.2", port=8080, debug=True)
+    app.run(host="127.0.0.3", port=8080, debug=True)

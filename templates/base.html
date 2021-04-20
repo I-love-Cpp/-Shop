@@ -7,24 +7,29 @@
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="static/CSS/img-adaptive">
     <title>{{title}}</title>
     <style>
-       p {
-        padding: 10px;
-       }
-
-
+        p {
+            padding: 10px;
+        }
 
     </style>
 </head>
-<body>
-<p><img src="static/img/title2.PNG" alt=":(" class="responsive" align="center"></p>
+<body style="background-color:LightSkyBlue">
+
+<style>
+    img{
+        width: 100%;
+    }
+
+</style>
+
+<img src="static/img/title2.PNG" alt=":(" class="responsive" align="center">
 <header>
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light" style="background-color:LightSkyBlue">
         {% if current_user.is_authenticated %}
         <a class="navbar-brand" href="">Добро пожаловать {{ current_user.name }}!</a>
-        <a class="navbar-brand" href="/add_product">Добавить продукт</a>
+        <a class="navbar-brand" href="/add_product">Добавить продукт <img src="static/img/plus.png" height="25" style="width: 10%"></a>
         <a class="navabar-brand" href="/logout">Выйти из аккаунта</a>
         {% else %}
         <p>
@@ -37,14 +42,18 @@
 <!-- Begin page content -->
 <nav class="navbar navbar-light bg-light">
     <p>
-        <a class="btn btn-secondary" href="/user_basket">Перейти в корзину</a>
-        <a class="btn btn-secondary" href="/">На главную</a>
+        <a href="/user_basket"> <img src="static/img/basket.jpg" height="30" style="width: 10%"></a>
+        <a style="margin: 10px" href="/"><img src="static/img/home.png" height="30" style="width: 10%"></a>
     </p>
 </nav>
 {% if add_find %}
 <form action="/" name="find_form" method="POST">
     <p align="center"><input type="text" name="req">
-        <input type="submit" value="Найти"></p>
+        <a style="width: 20%">
+        <input type="submit" value="Найти">
+        <img src="static/img/magnifier.png" height="25" style="width: 2%">
+        </a>
+    </p>
 </form>
 {% endif %}
 <main role="main" class="container">

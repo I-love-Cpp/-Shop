@@ -9,29 +9,44 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="static/CSS/img-adaptive">
     <title>{{title}}</title>
+    <style>
+       p {
+        padding: 10px;
+       }
 
+
+
+    </style>
 </head>
 <body>
 <p><img src="static/img/title2.PNG" alt=":(" class="responsive" align="center"></p>
 <header>
     <nav class="navbar navbar-light bg-light">
         {% if current_user.is_authenticated %}
-            <a class="navbar-brand" href="">Добро пожаловать {{ current_user.name }}!</a>
-            <a class="navbar-brand" href="/add_product">Add product</a>
-            <a class="navabar-brand" href="/logout">Выйти из аккаунта</a>
+        <a class="navbar-brand" href="">Добро пожаловать {{ current_user.name }}!</a>
+        <a class="navbar-brand" href="/add_product">Добавить продукт</a>
+        <a class="navabar-brand" href="/logout">Выйти из аккаунта</a>
         {% else %}
-            <p>
-                <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-                <a class="btn btn-success" href="/login">Войти</a>
-            </p>
-{% endif %}
+        <p>
+            <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
+            <a class="btn btn-success" href="/login">Войти</a>
+        </p>
+        {% endif %}
     </nav>
 </header>
 <!-- Begin page content -->
-<form action="http://192.168.1.10:8080/" name="find_form" method="POST">
-    <p><input type="text" name="req" align="right"></p>
-    <p><input type="submit" value="Найти" align="right"></p>
+<nav class="navbar navbar-light bg-light">
+    <p>
+        <a class="btn btn-secondary" href="/user_basket">Перейти в корзину</a>
+        <a class="btn btn-secondary" href="/">На главную</a>
+    </p>
+</nav>
+{% if add_find %}
+<form action="/" name="find_form" method="POST">
+    <p align="center"><input type="text" name="req">
+        <input type="submit" value="Найти"></p>
 </form>
+{% endif %}
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>

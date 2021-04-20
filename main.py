@@ -1,17 +1,18 @@
 import os
 
-from data import db_session
-from data.products import Product
-from data.users import User
 from flask import Flask, request, redirect, abort
 from flask import render_template
 from flask_login import LoginManager, logout_user, login_required, login_user, \
     current_user
-from forms.product import CreateForm
-from forms.user import RegisterForm, LoginForm
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = r"d:/Python/Яндекс лицей 2 год/Магазин Shop (MarsOne)/static/uploads/"
+from data import db_session
+from data.products import Product
+from data.users import User
+from forms.product import CreateForm
+from forms.user import RegisterForm, LoginForm
+
+UPLOAD_FOLDER = r"d:/Sources/Магазин-Shop-(Marce-One)/static/uploads/"
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -43,10 +44,38 @@ def delete(id):
     return redirect('/')
 
 
+# обработка формы добавления продукта
+@app.route('/add_product', methods=['GET', 'POST'])
+@login_required
+def add_product():
+    form = CreateForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        product = Product()
+
+        file = request.files['fl']
+        filename = secure_filename(file.filename)
+        if filename:
+            file.save(
+                os.path.join(app.config['UPLOAD_FOLDER'].strip(), filename))
+            product.img = "static/uploads/" + filename
+        else:
+            product.img = "static/uploads/" + 'none_image.png'
+        product.price = form.price.data
+        product.desc = form.desc.data
+        product.in_stock = form.in_stock.data
+        product.user_id = current_user.id
+        current_user.product.append(product)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect("/")
+    return render_template('product.html', title='Добавление товара',
+                           form=form)
+
+
 @app.route('/edit_product/<id>', methods=['GET', 'POST'])
 def edit(id):
     form = CreateForm()
-    print(request.method)
     if request.method == 'GET':
         db_sess = db_session.create_session()
         prds = db_sess.query(Product).filter(Product.id == id,
@@ -60,15 +89,13 @@ def edit(id):
             abort(404)
     elif form.validate_on_submit:
         db_sess = db_session.create_session()
-        prds = db_sess.query(Product).filter(Product.id == id,
-                                             Product.user_id == current_user.id
-                                             ).first()
-        if prds:
-            db_sess = db_session.create_session()
-            product = Product()
+        product = db_sess.query(Product).filter(Product.id == id,
+                                                Product.user_id == current_user.id
+                                                ).first()
+        if product:
             file = request.files['fl']
             filename = secure_filename(file.filename)
-            if filename != '':
+            if filename:
                 file.save(
                     os.path.join(app.config['UPLOAD_FOLDER'].strip(), filename))
                 product.img = "static/uploads/" + filename
@@ -76,10 +103,7 @@ def edit(id):
             product.desc = form.desc.data
             product.in_stock = form.in_stock.data
             product.user_id = current_user.id
-            current_user.product.append(product)
-            db_sess.merge(current_user)
             db_sess.commit()
-            delete(id)
             return redirect('/')
         else:
             abort(404)
@@ -91,15 +115,66 @@ def edit(id):
 def default():
     req = ''
     if request.method == 'POST':
-        req = request.form['req']
+        req = request.form['req'].lower()
     print(req)
     products = []
+    str_indexes = []
     db_session.global_init("db/Shop.db")
     db_sess = db_session.create_session()
     for prd in db_sess.query(Product).all():
-        if req in prd.desc:
+        if req in prd.desc.lower():
             products.append(prd)
-    return render_template('index.html', prds=products)
+            str_indexes.append(str(prd.id))
+    return render_template('index.html', prds=products, size=len(products),
+                           str_indexes=str_indexes, add_find=True,
+                           head='Товары по заданным категориям', sum=0)
+
+
+# корзина пользователя
+@app.route('/user_basket', methods=['GET', 'POST'])
+def user_basket():
+    need_find = current_user.basket.split('||')
+    products = []
+    str_indexes = []
+    sum = 0
+    db_session.global_init("db/Shop.db")
+    db_sess = db_session.create_session()
+    for prd in db_sess.query(Product).all():
+        if str(prd.id) in need_find:
+            products.append(prd)
+            str_indexes.append(str(prd.id))
+            sum += prd.price
+    return render_template('index.html', prds=products, size=len(products),
+                           str_indexes=str_indexes, add_find=False,
+                           head_name=True, head='Товары из вашей корзины',
+                           sum=sum)
+
+
+# добавление в корзину
+@app.route('/basket/<id>', methods=['GET', 'POST'])
+def basket(id):
+    db_sess = db_session.create_session()
+    if current_user.basket:
+        current_user.basket += '||' + id
+    else:
+        current_user.basket = id
+    db_sess.merge(current_user)
+    db_sess.commit()
+    print(current_user.basket)
+    return redirect('/')
+
+
+@app.route('/dlbasket/<id>', methods=['GET', 'POST'])
+def dlbasket(id):
+    db_sess = db_session.create_session()
+    new_basket = []
+    for elem in current_user.basket.split('||'):
+        if elem != str(id):
+            new_basket.append(elem)
+    current_user.basket = '||'.join(new_basket)
+    db_sess.merge(current_user)
+    db_sess.commit()
+    return redirect('/')
 
 
 @app.route('/logout')
@@ -128,38 +203,12 @@ def reqister():
             surname=form.surname.data,
             age=form.age.data,
             address=form.age.data,
-            position=form.position.data,
-            speciality=form.speciality.data
         )
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
-
-
-# обработка формы добавления продукта
-@app.route('/add_product', methods=['GET', 'POST'])
-@login_required
-def add_product():
-    form = CreateForm()
-    if form.validate_on_submit():
-        file = request.files['fl']
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'].strip(), filename))
-        db_sess = db_session.create_session()
-        product = Product()
-        product.img = "static/uploads/" + filename
-        product.price = form.price.data
-        product.desc = form.desc.data
-        product.in_stock = form.in_stock.data
-        product.user_id = current_user.id
-        current_user.product.append(product)
-        db_sess.merge(current_user)
-        db_sess.commit()
-        return redirect("/")
-    return render_template('product.html', title='Добавление товара',
-                           form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -178,4 +227,4 @@ def login():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.1.10", port=8080, debug=True)
+    app.run(host="127.0.0.2", port=8080, debug=True)

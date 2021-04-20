@@ -1,30 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <link rel="stylesheet" href="static/CSS/product.css">
-<h4 align="center">Товары по заданным категориям</h4>
+{% if size == 0 %}
+<h4 align="center"> Товары не найдены</h4>
+{% else %}
+<h4 align="center">{{head}}</h4>
 {% for prd in prds %}
-    <div class="product-item">
-      <div class="product-img">
+<div class="product-item">
+    <div class="product-img">
         <a href="">
-          <img src = "{{ prd.img }}" alt=":(">
+            <img src="{{ prd.img }}" alt=":(">
         </a>
-      </div>
-      <div class="product-list">
+    </div>
+    <div class="product-list">
         <h3>{{ prd.desc }}</h3>
-<!--        <div class="stars"></div>-->
+        <!--        <div class="stars"></div>-->
         <span class="price">₽ {{ prd.price }}</span>
         <div class="actions">
-          <div class="add-to-cart">
-            <a href="" class="cart-button">В корзину</a>
-          </div>
-<!--          <div class="add-to-links">-->
-<!--            <a href="" class="wishlist"></a>-->
-<!--            <a href="" class="compare"></a>-->
-<!--          </div>-->
-          </div>
+            <div class="add-to-cart">
+                {% if str_indexes[loop.index0] in current_user.basket%}
+                <a href="" class="cart-button">Уже в корзине</a>
+                <a href="/dlbasket/{{prd.id}}" class="cart-button">Удалить из корзины</a>
+                {% else %}
+                <a href="/basket/{{prd.id}}" class="cart-button">В корзину</a>
+                {% endif %}
+            </div>
+            <!--          <div class="add-to-links">-->
+            <!--            <a href="" class="wishlist"></a>-->
+            <!--            <a href="" class="compare"></a>-->
+            <!--          </div>-->
         </div>
-        {% if current_user.is_authenticated and prd.user_id == current_user.id%}
+    </div>
+    {% if current_user.is_authenticated and prd.user_id == current_user.id%}
     <div>
         <a href="/edit_product/{{prd.id}}" class="btn btn-warning">
             Изменить товар
@@ -33,8 +42,12 @@
             Удалить товар
         </a>
     </div>
-{% endif %}
-    </div>
+    {% endif %}
+</div>
 
 {% endfor %}
+{% if sum != 0 %}
+<h4>Сумма заказа: {{sum}}</h4>
+{% endif %}
+{% endif %}
 {% endblock %}

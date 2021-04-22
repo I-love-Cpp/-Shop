@@ -7,6 +7,7 @@ from flask_login import LoginManager, logout_user, login_required, login_user, \
 from werkzeug.utils import secure_filename
 
 from data import db_session
+from data.order import Order
 from data.products import Product
 from data.users import User
 from forms.product import CreateForm
@@ -17,6 +18,7 @@ UPLOAD_FOLDER = r"d:/Sources/Магазин-Shop-(Marce-One)/static/uploads/"
 
 # Параметры запуска
 app = Flask(__name__)
+# run_with_ngrok(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
@@ -152,6 +154,58 @@ def default():
                            head='Товары по заданным категориям', sum=0)
 
 
+@app.route('/add_order', methods=["GET", "POST"])
+def add_order():
+    db_session.global_init("db/Shop.db")
+    db_sess = db_session.create_session()
+    for elem in current_user.basket.split('||'):
+        if elem != '':
+            order = Order()
+            order.from_user = current_user.id
+            order.product = elem
+            prd = db_sess.query(Product).filter(Product.id == elem).first()
+            order.to_user = prd.user_id
+            db_sess.add(order)
+            if current_user.my_orders:
+                current_user.my_orders += '||' + elem
+            else:
+                current_user.my_orders = elem
+    current_user.basket = ""
+    db_sess.merge(current_user)
+    db_sess.commit()
+    return redirect('/user_basket')
+
+
+# То, что заказал пользователь
+@app.route('/user_orders', methods=["GET", "POST"])
+def user_orders():
+    db_session.global_init("db/Shop.db")
+    db_sess = db_session.create_session()
+    order = []
+    need_find = []
+    if current_user.my_orders:
+        need_find = current_user.my_orders.split('||')
+    for elem in db_sess.query(Product).all():
+        if str(elem.id) in need_find:
+            usr = db_sess.query(User).filter(User.id == elem.user_id).first()
+            order.append([usr, elem])
+    return render_template('orders.html', orders=order)
+
+
+@app.route('/user_sells', methods=["GET", "POST"])
+def user_sells():
+    db_session.global_init("db/Shop.db")
+    db_sess = db_session.create_session()
+    orders = []
+    for elem in db_sess.query(Order).filter(Order.to_user == current_user.id):
+        product = db_sess.query(Product).filter(
+            Product.id == elem.product).first()
+        fr = db_sess.query(User).filter(User.id == elem.from_user).first()
+        if product:
+            orders.append([fr, product])
+    return render_template('sells.html', orders=orders)
+
+
 # корзина пользователя
 @app.route('/user_basket', methods=['GET', 'POST'])
 def user_basket():
@@ -273,4 +327,4 @@ def login():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.3", port=8080, debug=True)
+    app.run(host='192.168.1.10', port=8080)

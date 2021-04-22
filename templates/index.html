@@ -28,6 +28,8 @@
                     {% else %}
                         <a href="/basket/{{prd.id}}" class="cart-button">В корзину</a>
                     {% endif %}
+                {% else %}
+                    <a href="/basket/{{prd.id}}" class="cart-button">В корзину</a>
                 {%endif%}
             </div>
         </div>
@@ -50,6 +52,7 @@
 {% endfor %}
 {% if sum != 0 %}
 <h4>Сумма заказа: {{sum}}</h4>
+<a href="/add_order">Сделать заказ</a>
 {% endif %}
 {% endif %}
 {% endblock %}

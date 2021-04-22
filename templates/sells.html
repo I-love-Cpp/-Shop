@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 align="center">Ваши продажи</h1>
+
+{% for order in orders %}
+<div align="center" class="card text-white bg-info mb-3" style="width: 30rem;" >
+    <img class="card-img-top" src="{{order[1].img}}" alt="Product image">
+    <div class="card-body">
+        <h5 class="card-title">{{order[1].desc}}</h5>
+        <p class="card-text">Пользователь {{order[0].name}} хочет купить у вас товар. Контакты для связи(email):
+            {{order[0].email}}</p>
+        <a href="https://mail.google.com/mail/" class="btn btn-primary">Перейти в почту</a>
+    </div>
+</div>
+<h1>
+
+
+</h1>
+{% endfor %}
+{% endblock %}

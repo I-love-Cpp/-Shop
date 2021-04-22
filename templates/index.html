@@ -3,11 +3,13 @@
 {% block content %}
 
 <link rel="stylesheet" href="static/CSS/product.css">
+<!--изменение заголовка-->
 {% if size == 0 %}
 <h4 align="center"> Товары не найдены</h4>
 {% else %}
 <h4 align="center">{{head}}</h4>
 {% for prd in prds %}
+<!--Используя Css стиль делаем красивую карточку-->
 <div class="product-item">
     <div class="product-img">
         <a href="">
@@ -16,21 +18,18 @@
     </div>
     <div class="product-list">
         <h3>{{ prd.desc }}</h3>
-        <!--        <div class="stars"></div>-->
         <span class="price">₽ {{ prd.price }}</span>
         <div class="actions">
             <div class="add-to-cart">
-                {% if str_indexes[loop.index0] in current_user.basket%}
-                <a href="" class="cart-button">Уже в корзине</a>
-                <a href="/dlbasket/{{prd.id}}" class="cart-button">Удалить из корзины</a>
-                {% else %}
-                <a href="/basket/{{prd.id}}" class="cart-button">В корзину</a>
-                {% endif %}
+                {% if current_user.basket %}
+                    {% if str_indexes[loop.index0] in current_user.basket%}
+                        <a href="" class="cart-button">Уже в корзине</a>
+                        <a href="/dlbasket/{{prd.id}}" class="cart-button">Удалить из корзины</a>
+                    {% else %}
+                        <a href="/basket/{{prd.id}}" class="cart-button">В корзину</a>
+                    {% endif %}
+                {%endif%}
             </div>
-            <!--          <div class="add-to-links">-->
-            <!--            <a href="" class="wishlist"></a>-->
-            <!--            <a href="" class="compare"></a>-->
-            <!--          </div>-->
         </div>
     </div>
     {% if current_user.is_authenticated and prd.user_id == current_user.id%}

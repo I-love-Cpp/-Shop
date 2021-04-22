@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.fields.html5 import EmailField, IntegerField
 from wtforms.validators import DataRequired
 
+#Описания полей формы регистриции
 
 class RegisterForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
@@ -16,6 +17,7 @@ class RegisterForm(FlaskForm):
     address = StringField('Address')
     submit = SubmitField('Submit')
 
+#Описание полей формы входа
 
 class LoginForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])

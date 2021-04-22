@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .db_session import SqlAlchemyBase
 
 
+# Описание полей таблицы users
+
 class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 

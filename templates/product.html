@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
+<!--Из формы создания предмета загружаем поля-->
+
 {% block content %}
-<h1>Adding a product</h1>
+<h1>Добавление/Изменение товара</h1>
 <form action="" method="post" enctype=multipart/form-data>
     {{ form.hidden_tag() }}
     <input type=file name="fl">

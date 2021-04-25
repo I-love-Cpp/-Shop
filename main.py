@@ -220,7 +220,8 @@ def user_basket():
     str_indexes = []
     # Сумма стоимости всех товаров
     sum = 0
-    db_session.global_init("db/Shop.db")
+    db_session.global_init("db/Sho"
+                           "p.db")
     db_sess = db_session.create_session()
     for prd in db_sess.query(Product).all():
         # Если id товара есть в корзине, добавляем его
@@ -292,7 +293,7 @@ def reqister():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
-        # Создайм объект класса User
+        # Создайм объект класса User с данными, полуенными из формы
         user = User(
             name=form.name.data,
             email=form.email.data,

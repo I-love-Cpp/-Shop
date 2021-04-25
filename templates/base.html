@@ -16,6 +16,8 @@
         }
 
 
+
+
     </style>
 </head>
 <body style="background-color:LightSkyBlue">
@@ -24,6 +26,8 @@
     img{
         width: 100%;
     }
+
+
 
 
 </style>
@@ -73,7 +77,9 @@
 <!--Добавим две кновки ввиде картинок-->
 <nav class="navbar navbar-light" style="background-color: LightSkyBlue;">
     <p>
+        {% if current_user.is_authenticated%}
         <a href="/user_basket"> <img src="static/img/basket1_tr.png" height="30" style="width: 10%"></a>
+        {% endif %}
         <a style="margin: 10px" href="/"><img src="static/img/home_tr.png" height="30" style="width: 10%"></a>
     </p>
 </nav>

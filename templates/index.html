@@ -20,6 +20,7 @@
         <h3>{{ prd.desc }}</h3>
         <span class="price">₽ {{ prd.price }}</span>
         <div class="actions">
+            {% if current_user.is_authenticated%}
             <div class="add-to-cart">
                 {% if current_user.basket %}
                 {% if str_indexes[loop.index0] in current_user.basket%}
@@ -42,6 +43,7 @@
                 {% endif %}
                 {%endif%}
             </div>
+            {%endif%}
         </div>
     </div>
 

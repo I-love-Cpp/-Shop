@@ -83,7 +83,9 @@
 <!--    </p>-->
 <!--</nav>-->
 <div class="btn-group" role="group" aria-label="Basic example" style="background-color:  #2d8bba">
+    {% if current_user.is_authenticated%}
     <a href="/user_basket"> <button type="button" class="btn btn-info" style="width: 85%">Корзина</button> </a>
+    {% endif %}
     <a href="/"><button type="button" class="btn btn-info" style="width: 85%">Главная</button></a>
 </div>
 {% if add_find %}

@@ -14,11 +14,10 @@ from forms.product import CreateForm
 from forms.user import RegisterForm, LoginForm
 
 # Путь к файлу, куда будут загружаться изображения пользователей
-UPLOAD_FOLDER = r"d:/Sources/Магазин-Shop-(Marce-One)/static/uploads/"
+UPLOAD_FOLDER = r"Магазин-Shop-(Marce-One)/static/uploads/"
 
 # Параметры запуска
 app = Flask(__name__)
-# run_with_ngrok(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
@@ -166,10 +165,6 @@ def add_order():
             prd = db_sess.query(Product).filter(Product.id == elem).first()
             order.to_user = prd.user_id
             db_sess.add(order)
-            if current_user.my_orders:
-                current_user.my_orders += '||' + elem
-            else:
-                current_user.my_orders = elem
     current_user.basket = ""
     db_sess.merge(current_user)
     db_sess.commit()
@@ -181,15 +176,14 @@ def add_order():
 def user_orders():
     db_session.global_init("db/Shop.db")
     db_sess = db_session.create_session()
-    order = []
-    need_find = []
-    if current_user.my_orders:
-        need_find = current_user.my_orders.split('||')
-    for elem in db_sess.query(Product).all():
-        if str(elem.id) in need_find:
-            usr = db_sess.query(User).filter(User.id == elem.user_id).first()
-            order.append([usr, elem])
-    return render_template('orders.html', orders=order)
+    orders = []
+    for elem in db_sess.query(Order).filter(Order.from_user == current_user.id):
+        product = db_sess.query(Product).filter(
+            Product.id == elem.product).first()
+        fr = db_sess.query(User).filter(User.id == elem.to_user).first()
+        if product:
+            orders.append([fr, product, elem.id])
+    return render_template('orders.html', orders=orders)
 
 
 @app.route('/user_sells', methods=["GET", "POST"])
@@ -202,8 +196,21 @@ def user_sells():
             Product.id == elem.product).first()
         fr = db_sess.query(User).filter(User.id == elem.from_user).first()
         if product:
-            orders.append([fr, product])
+            orders.append([fr, product, elem.id])
     return render_template('sells.html', orders=orders)
+
+
+# обработка удаление заказа или запроса на покупку
+@app.route('/delp/<id>', methods=['GET', 'POST'])
+def delp(id):
+    # устанавливаем соединение с базой данных
+    db_session.global_init('db/Shop.db')
+    db_sess = db_session.create_session()
+    # ищем товар для удаления
+    to_del = db_sess.query(Order).filter(Order.id == id).first()
+    db_sess.delete(to_del)
+    db_sess.commit()
+    return redirect('/user_orders')
 
 
 # корзина пользователя
@@ -328,4 +335,4 @@ def login():
 
 
 if __name__ == "__main__":
-    app.run(host='192.168.1.10', port=8080)
+    app.run(host='127.0.0.1', port=8080, debug=True)

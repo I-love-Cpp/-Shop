@@ -14,13 +14,12 @@
         p {
             padding: 10px;
         }
-
-
-
-
+        button {
+            margin-right:100px;
+        }
     </style>
 </head>
-<body style="background-color:LightSkyBlue">
+<body style="background-color:#2d8bba">
 <!--делаем растягивание картинки заголовка на весь экран-->
 <style>
     img{
@@ -34,7 +33,7 @@
 <!--Загружаем картинку заголовка-->
 <img src="static/img/title2.PNG" alt=":(" class="responsive" align="center">
 <!--Изпользуя bootstrap создадм полоску с кнопками-->
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: LightSkyBlue;">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #2d8bba;">
     {% if current_user.is_authenticated %}
     <a class="navbar-brand" href="/">Добро пожаловать {{ current_user.name }}!</a>
     {% endif %}
@@ -75,22 +74,27 @@
     </div>
 </nav>
 <!--Добавим две кновки ввиде картинок-->
-<nav class="navbar navbar-light" style="background-color: LightSkyBlue;">
-    <p>
-        {% if current_user.is_authenticated%}
-        <a href="/user_basket"> <img src="static/img/basket1_tr.png" height="30" style="width: 10%"></a>
-        {% endif %}
-        <a style="margin: 10px" href="/"><img src="static/img/home_tr.png" height="30" style="width: 10%"></a>
-    </p>
-</nav>
+<!--<nav class="navbar navbar-light" style="background-color: #2d8bba;">-->
+<!--    <p>-->
+<!--        {% if current_user.is_authenticated%}-->
+<!--        <a href="/user_basket"> <img src="static/img/basket1_tr.png" height="30" style="width: 10%"></a>-->
+<!--        {% endif %}-->
+<!--        <a style="margin: 10px" href="/"><img src="static/img/home_tr.png" height="30" style="width: 10%"></a>-->
+<!--    </p>-->
+<!--</nav>-->
+<div class="btn-group" role="group" aria-label="Basic example" style="background-color:  #2d8bba">
+    <a href="/user_basket"> <button type="button" class="btn btn-info" style="width: 85%">Корзина</button> </a>
+    <a href="/"><button type="button" class="btn btn-info" style="width: 85%">Главная</button></a>
+</div>
 {% if add_find %}
 <!--Добавление поисковой строки-->
-<nav class="navbar navbar-light" style="background-color: LightSkyBlue;">
+<nav class="navbar navbar-light" style="background-color: #2d8bba;">
     <form class="form-inline" action="/" name="find_form" method="POST">
         <p align="center">
             <input class="form-control mr-sm-2" type="search" placeholder="Введите название товара" aria-label="Search"
                    name="req" style="width: 400px;">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+            <button class="btn btn-dark" type="submit">Поиск</button>
+<!--            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>-->
         </p>
     </form>
 </nav>

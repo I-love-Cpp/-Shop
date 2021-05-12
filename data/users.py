@@ -22,7 +22,6 @@ class User(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=True)
     basket = sqlalchemy.Column(sqlalchemy.String)
-    my_orders = sqlalchemy.Column(sqlalchemy.String)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                       default=datetime.datetime.now)

@@ -14,7 +14,7 @@ from forms.product import CreateForm
 from forms.user import RegisterForm, LoginForm
 
 # Путь к файлу, куда будут загружаться изображения пользователей
-UPLOAD_FOLDER = r"Магазин-Shop-(Marce-One)/static/uploads/"
+UPLOAD_FOLDER = r"static/uploads/"
 
 # Параметры запуска
 app = Flask(__name__)
